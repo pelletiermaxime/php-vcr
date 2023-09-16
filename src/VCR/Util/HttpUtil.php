@@ -92,7 +92,7 @@ class HttpUtil
      *
      * @param array<string,string|array<string,string>> $headers Headers as key/value pairs
      *
-     * @return string[] List of headers ['Content-Type: text/html', '...'].
+     * @return string[] List of headers ["Content-Type: text/html\r\n", '...'].
      */
     public static function formatHeadersForCurl(array $headers): array
     {
@@ -101,7 +101,7 @@ class HttpUtil
         foreach ($headers as $key => $values) {
             if (\is_array($values)) {
                 foreach ($values as $value) {
-                    $curlHeaders[] = $key.': '.$value;
+                    $curlHeaders[] = $key.': '.$value . "\r\n";
                 }
             } else {
                 $curlHeaders[] = $key.': '.$values;
@@ -120,7 +120,8 @@ class HttpUtil
     {
         return 'HTTP/'.$response->getHttpVersion()
             .' '.$response->getStatusCode()
-            .' '.$response->getStatusMessage();
+            .' '.$response->getStatusMessage()
+            . "\r\n";
     }
 
     /**
@@ -133,6 +134,6 @@ class HttpUtil
         $headers = self::formatHeadersForCurl($response->getHeaders());
         array_unshift($headers, self::formatAsStatusString($response));
 
-        return implode("\r\n", $headers)."\r\n\r\n";
+        return implode("", $headers)."\r\n";
     }
 }
